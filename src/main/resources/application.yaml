@@ -1,3 +1,19 @@
 spring:
   application:
     name: Expense-Tracker-API
+  datasource:
+    url: jdbc:postgresql://localhost:5433/expense-tracker-api
+    username: postgres
+    password: 7h3mb3la
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: always
