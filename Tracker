@@ -1,0 +1,17 @@
+1. There fields in dto (expense, userProfile, budget) that need to be removed for the final product (They will be
+replace
+    with Spring Security).
+2. The user dto will need updates (add more fields) when implementing Security, since they're only needed
+    for CRUD operations NOT Security. The user update dto will be needed due to this update.
+
+Changes:
+1. Add description field in Category
+
+"feat: Implement complete DTO layer and add description field in the Category entity.
+- Add Request and Response DTOs for User entity
+- Add Request, Response, and Update DTOs for the entities:
+    - Expense
+    - Category
+    - UserProfile
+    - Budget
+"

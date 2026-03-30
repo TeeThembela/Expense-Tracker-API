@@ -1,0 +1,29 @@
+package com.teetech.expensetrackerapi.dto;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
+
+public record ExpenseRequestDTO (
+        // Temporary - will be removed when security is added
+        @NotNull(message = "User Id is required")
+        UUID userId,
+
+        @NotNull(message = "Amount is required")
+        @Positive(message = "Amount must greater than zero")
+        BigDecimal amount,
+
+        @NotNull(message = "Expense Date is required")
+        @PastOrPresent(message = "Expense Date must in the Present or Past")
+        LocalDate expenseDate,
+
+        @NotNull(message = "Category is required")
+        UUID categoryId,
+
+        String description
+) {
+}

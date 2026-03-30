@@ -47,6 +47,9 @@ public class Category {
     @Column(length = 50)
     private PredefinedCategory predefinedCategory;
 
+    @Column(length = 500)
+    private String description;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
