@@ -3,15 +3,27 @@ replace
     with Spring Security).
 2. The user dto will need updates (add more fields) when implementing Security, since they're only needed
     for CRUD operations NOT Security. The user update dto will be needed due to this update.
+3. The userId field on updates request should given as path variable not body field.
+3. Any userId field in dto or mapper (?) will removed, because they supposed to be extract from
+   the SecurityContextHolder and password as a parameter with the request on the service layer method.
+3. In the mapper there some fields (category, user) which are not mapped (due to relationships),
+    so they set up on the service layer
+
 
 Changes:
-1. Add description field in Category
+1. Renamed the category field in ExpenseResponseDTO to categoryId
 
-"feat: Implement complete DTO layer and add description field in the Category entity.
-- Add Request and Response DTOs for User entity
-- Add Request, Response, and Update DTOs for the entities:
-    - Expense
-    - Category
-    - UserProfile
-    - Budget
+"feat: add MapStruct mappers for entity-DTO conversion and make update in DTO layer
+
+ - Implement mappers for Expense, Budget, Category, User, UserProfile
+ - Create MapperHelper for common field extraction logic
+ - Add proper @MappingTarget for update operations
+ - Configure unmappedTargetPolicy for compile-time safety
+ - Map categoryId and categoryName from Category entity
+ - DTO layer updates:
+    - Rename category field in ExpenseResponseDTO to categoryId
+    - Change the data type from String to UUID and rename field from category to
+      categoryId in ExpenseUpdateDTO
+    - Change the data type from String to BudgetPeriod for the field period in
+      BudgetUpdateDTO
 "

@@ -21,7 +21,7 @@ public record ExpenseUpdateDTO(
         @PastOrPresent(message = "Expense date must be in the present or past")
         LocalDate expenseDate,
 
-        String category,
+        UUID categoryId,
 
         String description
 ) {

@@ -1,5 +1,6 @@
 package com.teetech.expensetrackerapi.dto;
 
+import com.teetech.expensetrackerapi.enums.BudgetPeriod;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -19,7 +20,7 @@ public record BudgetUpdateDTO(
         @Positive(message = "Amount must be greater than zero")
         BigDecimal amount,
 
-        String period,
+        BudgetPeriod period,
 
         LocalDate startDate,
 

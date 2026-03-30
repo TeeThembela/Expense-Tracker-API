@@ -9,7 +9,7 @@ public record ExpenseResponseDTO(
         UUID id,
         BigDecimal amount,
         LocalDate expenseDate,
-        UUID category,
+        UUID categoryId,
         String categoryName,
         String description,
         LocalDateTime createdAt,
