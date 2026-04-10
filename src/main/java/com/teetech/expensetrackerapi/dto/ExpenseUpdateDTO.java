@@ -10,10 +10,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record ExpenseUpdateDTO(
-        //Expense id will come from path variable
-
-        // Temporary - will be removed when security is added from security context later
-        UUID userId,
 
         @Positive(message = "Amount must be greater than zero")
         BigDecimal amount,

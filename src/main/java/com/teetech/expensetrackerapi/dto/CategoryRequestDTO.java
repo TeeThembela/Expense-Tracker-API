@@ -7,9 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 public record CategoryRequestDTO (
-        // Temporary - will be removed when security is added
-        @NotNull(message = "User Id is required")
-        UUID userId,
 
         @NotBlank(message = "Category name is required")
         @Size(max = 100, message = "Category name cannot exceed 100 characters")

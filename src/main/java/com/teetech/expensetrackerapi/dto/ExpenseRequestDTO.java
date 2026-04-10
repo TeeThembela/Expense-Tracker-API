@@ -9,9 +9,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record ExpenseRequestDTO (
-        // Temporary - will be removed when security is added
-        @NotNull(message = "User Id is required")
-        UUID userId,
 
         @NotNull(message = "Amount is required")
         @Positive(message = "Amount must greater than zero")

@@ -9,11 +9,6 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record BudgetUpdateDTO(
-        //Budget id will come from path variable
-
-        // Temporary - will be removed when security is added from security context later
-        @NotNull(message = "Budget is required")
-        UUID userId,
 
         UUID categoryId,
 

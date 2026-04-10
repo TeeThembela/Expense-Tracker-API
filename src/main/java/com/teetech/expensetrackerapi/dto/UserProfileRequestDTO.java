@@ -7,9 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 public record UserProfileRequestDTO(
-        // Temporary - will be removed when security is added
-        @NotNull(message = "User id is required")
-        UUID userId,
 
         @NotBlank(message = "First name is required")
         @Size(max = 100, message = "First name cannot exceed 100 characters")

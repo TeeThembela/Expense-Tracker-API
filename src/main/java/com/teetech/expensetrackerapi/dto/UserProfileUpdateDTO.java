@@ -6,10 +6,6 @@ import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 public record UserProfileUpdateDTO(
-    //User Profile id will come from path variable
-
-    // Temporary - will be removed when security is added from security context later
-    UUID userId,
 
     @Size(max = 100, message = "First name cannot exceed 100 characters")
     String firstName,
