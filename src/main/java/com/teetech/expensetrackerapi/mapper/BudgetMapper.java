@@ -4,10 +4,7 @@ import com.teetech.expensetrackerapi.dto.BudgetRequestDTO;
 import com.teetech.expensetrackerapi.dto.BudgetResponseDTO;
 import com.teetech.expensetrackerapi.dto.BudgetUpdateDTO;
 import com.teetech.expensetrackerapi.entity.Budget;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {MapperHelper.class},unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface BudgetMapper {
@@ -25,6 +22,7 @@ public interface BudgetMapper {
     BudgetResponseDTO toBudgetDTO(Budget budget);
 
     //BudgetUpdateDTO -> Budget
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "category", ignore = true)

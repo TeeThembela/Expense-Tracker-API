@@ -4,10 +4,7 @@ import com.teetech.expensetrackerapi.dto.ExpenseRequestDTO;
 import com.teetech.expensetrackerapi.dto.ExpenseResponseDTO;
 import com.teetech.expensetrackerapi.dto.ExpenseUpdateDTO;
 import com.teetech.expensetrackerapi.entity.Expense;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring", uses = {MapperHelper.class},unmappedTargetPolicy = ReportingPolicy.ERROR)
@@ -26,6 +23,7 @@ public interface ExpenseMapper {
     ExpenseResponseDTO toExpenseDTO(Expense expense);
 
     //ExpenseUpdateDTO -> Expense
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "category", ignore = true)

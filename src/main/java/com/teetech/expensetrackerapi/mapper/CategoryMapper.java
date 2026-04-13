@@ -4,10 +4,7 @@ import com.teetech.expensetrackerapi.dto.CategoryRequestDTO;
 import com.teetech.expensetrackerapi.dto.CategoryResponseDTO;
 import com.teetech.expensetrackerapi.dto.CategoryUpdateDTO;
 import com.teetech.expensetrackerapi.entity.Category;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {MapperHelper.class},unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface CategoryMapper {
@@ -26,6 +23,7 @@ public interface CategoryMapper {
     CategoryResponseDTO toCategoryDTO(Category category);
 
     //CategoryUpdateDTO ->
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "type", ignore = true)

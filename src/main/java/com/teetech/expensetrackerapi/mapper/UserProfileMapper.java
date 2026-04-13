@@ -4,10 +4,7 @@ import com.teetech.expensetrackerapi.dto.UserProfileRequestDTO;
 import com.teetech.expensetrackerapi.dto.UserProfileResponseDTO;
 import com.teetech.expensetrackerapi.dto.UserProfileUpdateDTO;
 import com.teetech.expensetrackerapi.entity.UserProfile;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserProfileMapper {
@@ -22,6 +19,7 @@ public interface UserProfileMapper {
     UserProfileResponseDTO toUserProfileDTO(UserProfile profile);
 
     //UserProfileUpdateDTO -> UserProfile
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

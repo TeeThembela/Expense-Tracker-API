@@ -37,8 +37,8 @@ public class BudgetValidator {
 
     // Validate budget update request
     public List<String> validateBudgetUpdate(BudgetUpdateDTO dto){
-        log.debug("Validating budget update request: userId={}, categoryId={}, amount={}",
-                dto.userId(), dto.categoryId(), dto.amount());
+        log.debug("Validating budget update request:categoryId={}, amount={}",
+                dto.categoryId(), dto.amount());
 
         List<String> errors = new ArrayList<>();
 
