@@ -27,7 +27,7 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             "AND (b.endDate IS NULL OR :currentDate <= b.endDate)")
     Page<Budget> findActiveBudgets(
             @Param("userId") UUID userId,
-            @Param("currentDate")LocalDate currentDate,
+            @Param("currentDate") LocalDate currentDate,
             Pageable pageable
     );
 
@@ -42,6 +42,31 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             Pageable pageable
     );
 
+    @Query("SELECT b FROM Budget b " +
+            "WHERE b.user.id = :userId " +
+            "AND b.category.id = :categoryId " +
+            "AND b.startDate <= :expenseDate " +
+            "AND (b.endDate IS NULL OR b.endDate >= :expenseDate)")
+    Optional<Budget> findBudgetForCategoryOnDate(
+            @Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("expenseDate") LocalDate expenseDate
+    );
+
     //Get budgets ordered by start date (most recent first)
     Page<Budget> findByUserIdOrderByStartDateDesc(UUID userId, Pageable pageable);
+
+    @Query("SELECT COUNT(b) > 0 FROM Budget b " +
+            "WHERE b.user.id = :userId " +
+            "AND b.category.id = :categoryId " +
+            "AND (:excludeBudgetId IS NULL OR b.id <> :excludeBudgetId) " +
+            "AND (:newEndDate IS NULL OR b.startDate <= :newEndDate) " +
+            "AND (b.endDate IS NULL OR b.endDate >= :newStartDate)")
+    boolean existsOverlappingBudget(
+            @Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("newStartDate") LocalDate newStartDate,
+            @Param("newEndDate") LocalDate newEndDate,
+            @Param("excludeBudgetId") UUID excludeBudgetId
+    );
 }

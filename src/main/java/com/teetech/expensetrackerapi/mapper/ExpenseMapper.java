@@ -20,6 +20,7 @@ public interface ExpenseMapper {
     //Expense -> ExpenseResponseDTO
     @Mapping(source = "category", target = "categoryId", qualifiedByName = "extractCategoryId")
     @Mapping(source = "category", target = "categoryName", qualifiedByName = "extractCategoryName")
+    @Mapping(target = "budgetWarning", ignore = true)
     ExpenseResponseDTO toExpenseDTO(Expense expense);
 
     //ExpenseUpdateDTO -> Expense

@@ -13,9 +13,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "user_profiles", indexes = {
-        @Index(name = "idx_user_id", columnList = "user_id"),
-        @Index(name = "idx_display_name", columnList = "display_name"),
-        @Index(name = "idx_created_at", columnList = "created_at")
+        @Index(name = "idx_user_profiles_user_id", columnList = "user_id"),
+        @Index(name = "idx_user_profiles_display_name", columnList = "display_name"),
+        @Index(name = "idx_user_profiles_created_at", columnList = "created_at")
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +38,7 @@ public class UserProfile {
     @Column(nullable = false, length = 100)
     private String lastName;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 10, unique = true)
     private String phoneNumber;
 
     @Column(name = "display_name", length = 100)

@@ -79,7 +79,7 @@ public class UserProfileValidator {
                 log.debug("Invalid phone number format: {}", phoneNumber);
             }
             if (!ValidationHelper.isReasonablePhoneNumber(phoneNumber)){
-                errors.add("Phone number appears invalid. Please enter a valid South African phone number.");
+                errors.add("Phone number appears invalid. Please enter a valid phone number.");
                 log.warn("Suspicious phone number detected: {}", phoneNumber);
             }
         }

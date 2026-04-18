@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,10 +18,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "budgets", indexes = {
-        @Index(name = "idx_user_id", columnList = "user_id"),
-        @Index(name = "idx_category_id", columnList = "category_id"),
-        @Index(name = "idx_created_at", columnList = "created_at"),
-        @Index(name = "idx_amount", columnList = "amount")
+        @Index(name = "idx_budgets_user_id", columnList = "user_id"),
+        @Index(name = "idx_budgets_category_id", columnList = "category_id"),
+        @Index(name = "idx_budgets_created_at", columnList = "created_at"),
+        @Index(name = "idx_budgets_amount", columnList = "amount")
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,6 +46,7 @@ public class Budget {
     private BigDecimal amount = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(length = 20)
     private BudgetPeriod period;
 

@@ -13,6 +13,7 @@ public record ExpenseResponseDTO(
         String categoryName,
         String description,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String budgetWarning
 ) {
 }

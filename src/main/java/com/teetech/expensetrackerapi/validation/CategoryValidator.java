@@ -64,7 +64,8 @@ public class CategoryValidator {
     private List<String> validateCategoryRequest(String name, String description){
         List<String> errors = new ArrayList<>();
 
-        if (name != null){// Validate category name format
+        if (name != null){
+            // Validate category name format
             if (!ValidationHelper.isValidCategoryName(name)) {
                 errors.add("Category name must contain only letters, numbers, spaces, hyphens, and apostrophes");
                 log.debug("Invalid category name format: {}", name);

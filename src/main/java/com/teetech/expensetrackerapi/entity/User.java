@@ -1,7 +1,6 @@
 package com.teetech.expensetrackerapi.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users", indexes = {
-    @Index(name = "idx_id", columnList = "id"),
-    @Index(name = "idx_email", columnList = "email"),
-    @Index(name = "idx_created_at", columnList = "created_at")
+    @Index(name = "idx_users_email", columnList = "email"),
+    @Index(name = "idx_users_created_at", columnList = "created_at")
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,7 +29,6 @@ public class User {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
