@@ -1,16 +1,12 @@
 package com.teetech.expensetrackerapi.service.impl;
 
-import com.teetech.expensetrackerapi.dto.RegisterRequestDTO;
-import com.teetech.expensetrackerapi.dto.UserResponseDTO;
 import com.teetech.expensetrackerapi.dto.UserUpdateDTO;
 import com.teetech.expensetrackerapi.dto.UserUpdateResponseDTO;
 import com.teetech.expensetrackerapi.entity.User;
-import com.teetech.expensetrackerapi.exception.DuplicateUserException;
 import com.teetech.expensetrackerapi.exception.UserNotFoundException;
-import com.teetech.expensetrackerapi.mapper.UserMapper;
 import com.teetech.expensetrackerapi.repository.UserRepository;
 import com.teetech.expensetrackerapi.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private final UserMapper mapper;
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
@@ -70,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
         User user = findUserOrThrow(userId);
 
-        String responseMessage = null;
+        String responseMessage;
         if (email != null && password != null){
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode(password));

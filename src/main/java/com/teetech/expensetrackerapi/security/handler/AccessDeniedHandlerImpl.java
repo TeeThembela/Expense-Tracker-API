@@ -1,6 +1,5 @@
 package com.teetech.expensetrackerapi.security.handler;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     private final ObjectMapper mapper;
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException{
         log.warn("Forbidden access attempt - path: {}, reason: {}", request.getServletPath(),
                 accessDeniedException.getMessage());
 

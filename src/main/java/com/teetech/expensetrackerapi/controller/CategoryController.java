@@ -60,7 +60,7 @@ public class CategoryController {
     @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<Page<CategoryResponseDTO>> getCategories(
             @PathVariable UUID userId,
-            @PageableDefault(size = 10, sort = "type", direction = Sort.Direction.DESC) Pageable pageable){
+            @PageableDefault(sort = "type", direction = Sort.Direction.DESC) Pageable pageable){
 
         Page<CategoryResponseDTO> response = categoryService.getCategories(userId, pageable);
         return ResponseEntity.ok(response);

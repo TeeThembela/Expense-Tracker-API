@@ -1,7 +1,9 @@
 package com.teetech.expensetrackerapi.security.model;
 
 import com.teetech.expensetrackerapi.entity.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,24 +13,14 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Setter
+@Getter
 @RequiredArgsConstructor
 public class UserPrincipal implements UserDetails {
 
     private final User user;
 
     private String sessionId;
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public User getUser() {
-        return user;
-    }
 
     public UUID getId(){
         return user.getId();

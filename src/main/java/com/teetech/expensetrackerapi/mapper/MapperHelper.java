@@ -15,10 +15,6 @@ public class MapperHelper {
     public UUID extractCategoryId(Category category){
         return (category != null && category.getId() != null) ? category.getId() : null;
     }
-    @Named("extractUserId")
-    public UUID extractUserId(User user){
-        return (user != null && user.getId() != null) ? user.getId() : null;
-    }
 
     //Category name extraction
     @Named("extractCategoryName")

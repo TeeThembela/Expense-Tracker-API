@@ -60,7 +60,7 @@ public class BudgetController {
     @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<Page<BudgetResponseDTO>> getBudgets(
             @PathVariable UUID userId,
-            @PageableDefault(size = 10, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<BudgetResponseDTO> response = budgetService.getBudgets(userId, pageable);
         return ResponseEntity.ok(response);

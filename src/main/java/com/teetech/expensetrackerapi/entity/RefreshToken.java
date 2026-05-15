@@ -38,7 +38,4 @@ public class RefreshToken {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public boolean isExpired() {
-        return Instant.now().isAfter(expiresAt);
-    }
 }

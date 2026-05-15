@@ -2,7 +2,6 @@ package com.teetech.expensetrackerapi.repository;
 
 import com.teetech.expensetrackerapi.entity.Category;
 import com.teetech.expensetrackerapi.enums.CategoryType;
-import com.teetech.expensetrackerapi.enums.PredefinedCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

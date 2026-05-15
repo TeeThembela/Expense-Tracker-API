@@ -1,6 +1,5 @@
 package com.teetech.expensetrackerapi.security.handler;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     private final ObjectMapper mapper;
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         log.warn("Unauthorized access attempt - path: {}, reason: {}", request.getServletPath(), authException.getMessage());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
