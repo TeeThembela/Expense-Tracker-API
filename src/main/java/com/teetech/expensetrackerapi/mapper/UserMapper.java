@@ -1,6 +1,6 @@
 package com.teetech.expensetrackerapi.mapper;
 
-import com.teetech.expensetrackerapi.dto.UserRequestDTO;
+import com.teetech.expensetrackerapi.dto.RegisterRequestDTO;
 import com.teetech.expensetrackerapi.dto.UserResponseDTO;
 import com.teetech.expensetrackerapi.entity.User;
 import org.mapstruct.Mapper;
@@ -18,8 +18,14 @@ public interface UserMapper {
     @Mapping(target = "expenses", ignore = true)
     @Mapping(target = "categories", ignore = true)
     @Mapping(target = "budgets", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     @Mapping(target = "userProfile", ignore = true)
-    User toUser(UserRequestDTO requestDTO);
+    @Mapping(target = "enabled", ignore = true)
+    @Mapping(target = "accountNonExpired", ignore = true)
+    @Mapping(target = "accountNonLocked", ignore = true)
+    @Mapping(target = "credentialsNonExpired", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    User toUser(RegisterRequestDTO requestDTO);
 
     //User -> UserResponseDTO
     UserResponseDTO toUserDTO(User user);

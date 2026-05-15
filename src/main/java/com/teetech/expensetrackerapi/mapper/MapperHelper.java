@@ -2,7 +2,6 @@ package com.teetech.expensetrackerapi.mapper;
 
 import com.teetech.expensetrackerapi.entity.Category;
 import com.teetech.expensetrackerapi.entity.User;
-import com.teetech.expensetrackerapi.enums.CategoryType;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 

@@ -19,7 +19,7 @@ public class BudgetValidator {
     private static final BigDecimal maxBudgetAmount =  new BigDecimal("10000000");
     private static final BigDecimal minBudgetAmount =  new BigDecimal("0.01");
 
-    //Validate budget creation request
+    // Validate budget creation request
     public List<String> validateBudgetCreationRequest(BudgetRequestDTO dto){
         log.debug("Validating budget creation request: amount={}, period={}, startDate={}, endDate={}",
                 dto.amount(), dto.period(), dto.startDate(), dto.endDate());
@@ -37,12 +37,12 @@ public class BudgetValidator {
 
     // Validate budget update request
     public List<String> validateBudgetUpdate(BudgetUpdateDTO dto){
-        log.debug("Validating budget update request:categoryId={}, amount={}",
+        log.debug("Validating budget update request: categoryId={}, amount={}",
                 dto.categoryId(), dto.amount());
 
         List<String> errors = new ArrayList<>();
 
-        //Check if at least one field is being updated
+        // Check if at least one field is being updated
         if (dto.amount() == null && dto.period() == null && dto.startDate() == null
                 && dto.endDate() == null && dto.categoryId() == null) {
             errors.add("At least one field must be provided for update");
@@ -50,6 +50,7 @@ public class BudgetValidator {
             return errors;
         }
 
+        // Validate the fields that were provided
         errors.addAll(validateBudget(dto.amount(), dto.period(), dto.startDate(), dto.endDate()));
 
         if (!errors.isEmpty()) {
@@ -61,8 +62,7 @@ public class BudgetValidator {
         return errors;
     }
 
-    private List<String> validateBudget(BigDecimal amount, BudgetPeriod period, LocalDate startDate,
-                                        LocalDate endDate){
+    private List<String> validateBudget(BigDecimal amount, BudgetPeriod period, LocalDate startDate, LocalDate endDate){
         List<String> errors = new ArrayList<>();
 
         // Validate amount reasonableness
@@ -74,13 +74,11 @@ public class BudgetValidator {
             }
         }
 
-        // Validate period date alignment
-        if (period != null || startDate != null || endDate != null){
-            String periodError = validatePeriodDateAlignment(period, startDate, endDate);
-            if (periodError != null) {
-                errors.add(periodError);
-                log.debug("Period-date alignment validation failed: {}", periodError);
-            }
+        // Validate period date alignment (safely handles nulls now)
+        String periodError = validatePeriodDateAlignment(period, startDate, endDate);
+        if (periodError != null) {
+            errors.add(periodError);
+            log.debug("Period-date alignment validation failed: {}", periodError);
         }
 
         // Validate future start date warning
@@ -99,16 +97,27 @@ public class BudgetValidator {
     // Validate that date range aligns with budget period
     public String validatePeriodDateAlignment(BudgetPeriod period, LocalDate startDate, LocalDate endDate){
 
-        if (endDate == null ) {
-            if (period == null || period == BudgetPeriod.CUSTOM) return null;
-            return "Period should be CUSTOM or null since endDate is not provided";
+        // If neither date is provided (e.g., partial update of only amount or category), skip alignment check
+        if (startDate == null && endDate == null) {
+            return null;
         }
 
-        if (period != null && period != BudgetPeriod.CUSTOM && startDate != null){
-            long days = ChronoUnit.DAYS.between(startDate, endDate);
+        // If only one date is provided, we cannot validate the span
+        if (startDate == null || endDate == null) {
+            return "Both start date and end date must be provided together to validate period alignment";
+        }
+
+        // General sanity check
+        if (startDate.isAfter(endDate)) {
+            return "Start date cannot be after end date";
+        }
+
+        if (period != null && period != BudgetPeriod.CUSTOM){
+            // Add +1 to make the calculation inclusive of both start and end calendar days
+            long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
             log.debug("Validating period alignment: period={}, days={}", period, days);
 
-            return  switch (period) {
+            return switch (period) {
                 case WEEKLY -> {
                     if (days < 6 || days > 7) {
                         yield "Weekly budget should span 6-7 days. Current span: " + days + " days";

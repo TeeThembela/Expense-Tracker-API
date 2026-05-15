@@ -1,33 +1,30 @@
 package com.teetech.expensetrackerapi.controller;
 
-import com.teetech.expensetrackerapi.dto.UserRequestDTO;
-import com.teetech.expensetrackerapi.dto.UserResponseDTO;
+import com.teetech.expensetrackerapi.dto.UserUpdateDTO;
+import com.teetech.expensetrackerapi.dto.UserUpdateResponseDTO;
 import com.teetech.expensetrackerapi.service.UserService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@AllArgsConstructor
+@PreAuthorize("hasAuthority('ROLE_USER')")
 @RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO){
-        var userResponseDTO = userService.createUser(userRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
-    }
+    @PutMapping("/{userId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
+    public ResponseEntity<UserUpdateResponseDTO> updateUser(
+            @Valid @RequestBody UserUpdateDTO request,
+            @PathVariable UUID userId){
+        UserUpdateResponseDTO response = userService.updateUser(request, userId);
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUserProfile(
-            @PathVariable UUID userId) {
-
-        userService.deleteUser(userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
     }
 }

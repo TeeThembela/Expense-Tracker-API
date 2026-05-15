@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -17,3 +17,11 @@ spring:
   sql:
     init:
       mode: always
+
+application:
+  security:
+    jwt:
+      secret-key: YTNmOGMyZDFlNGI3MDkxZjZhMmM1ZThkM2I0ZjdhMWMyZTVkOGIzZjZhOWMyZTVkOGIxZjRhN2MwZTNkNmI5
+      access-token-expiration: 900000 # 15 minutes
+      refresh-token-expiration: 604800000 # 7 days
+      issuer: Expense-Tracker-API

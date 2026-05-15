@@ -5,24 +5,28 @@ import com.teetech.expensetrackerapi.dto.CategoryResponseDTO;
 import com.teetech.expensetrackerapi.dto.CategoryUpdateDTO;
 import com.teetech.expensetrackerapi.service.CategoryService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users/{userId}/categories")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@PreAuthorize("hasAuthority('ROLE_USER')")
 public class CategoryController {
+
     private final CategoryService categoryService;
 
     @PostMapping
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<CategoryResponseDTO> createCategory(
             @PathVariable UUID userId,
            @Valid @RequestBody CategoryRequestDTO dto){
@@ -32,6 +36,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable UUID userId,
             @PathVariable UUID categoryId,
@@ -42,6 +47,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<CategoryResponseDTO> getCategory(
             @PathVariable UUID categoryId,
             @PathVariable UUID userId){
@@ -51,6 +57,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<Page<CategoryResponseDTO>> getCategories(
             @PathVariable UUID userId,
             @PageableDefault(size = 10, sort = "type", direction = Sort.Direction.DESC) Pageable pageable){
@@ -60,6 +67,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<Void> deleteCategory(
             @PathVariable UUID categoryId,
             @PathVariable UUID userId

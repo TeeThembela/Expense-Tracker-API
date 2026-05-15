@@ -6,25 +6,29 @@ import com.teetech.expensetrackerapi.dto.ExpenseResponseDTO;
 import com.teetech.expensetrackerapi.dto.ExpenseUpdateDTO;
 import com.teetech.expensetrackerapi.service.ExpenseService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
+@PreAuthorize("hasAuthority('ROLE_USER')")
 @RequestMapping("/api/v1/users/{userId}/expenses")
 public class ExpenseController {
+
     private final ExpenseService expenseService;
 
     @PostMapping
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<ExpenseResponseDTO> createExpense(
             @Valid @RequestBody ExpenseRequestDTO dto,
             @PathVariable UUID userId){
@@ -34,6 +38,7 @@ public class ExpenseController {
     }
 
     @PutMapping("/{expenseId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<ExpenseResponseDTO> updateExpense(
             @Valid @RequestBody ExpenseUpdateDTO dto,
             @PathVariable UUID expenseId,
@@ -45,6 +50,7 @@ public class ExpenseController {
     }
 
     @GetMapping("/{expenseId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<ExpenseResponseDTO> getExpense(
             @PathVariable UUID expenseId,
             @PathVariable UUID userId
@@ -55,15 +61,18 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/{expenseId}")
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<Void> deleteExpense(
             @PathVariable UUID expenseId,
             @PathVariable UUID userId
             ){
+
         expenseService.deleteExpense(expenseId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
+    @PreAuthorize("authentication.principal.id.equals(#userId)")
     public ResponseEntity<Page<ExpenseResponseDTO>> getExpenses(
             @PathVariable UUID userId,
             @RequestParam(required = false) String period,

@@ -5,7 +5,6 @@ import com.teetech.expensetrackerapi.dto.ExpenseResponseDTO;
 import com.teetech.expensetrackerapi.dto.ExpenseUpdateDTO;
 import com.teetech.expensetrackerapi.entity.Expense;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring", uses = {MapperHelper.class},unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface ExpenseMapper {
