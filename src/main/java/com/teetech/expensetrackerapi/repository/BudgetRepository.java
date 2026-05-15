@@ -12,16 +12,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BudgetRepository extends JpaRepository<Budget, UUID> {
-    //Find all by user id
     Page<Budget> findAllByUserId(UUID userId, Pageable pageable);
 
-    //Find budget and ensure user owns it
     Optional<Budget> findByIdAndUserId(UUID budgetId, UUID userId);
 
-    //Find all by category id and user id
     Page<Budget> findAllByCategoryIdAndUserId(UUID categoryId, UUID userId, Pageable pageable);
 
-    //Filter active budgets (where current date is within budget period)
     @Query("SELECT b FROM Budget b WHERE b.user.id = :userId " +
             "AND :currentDate >= b.startDate " +
             "AND (b.endDate IS NULL OR :currentDate <= b.endDate)")
@@ -31,7 +27,6 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             Pageable pageable
     );
 
-    //Filter by startDate/endDate
     @Query("SELECT b FROM Budget b WHERE b.user.id = :userId " +
             "AND b.startDate <= :endDate " +
             "AND (b.endDate IS NULL OR b.endDate >= :startDate)")
@@ -53,16 +48,30 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             @Param("expenseDate") LocalDate expenseDate
     );
 
-    //Get budgets ordered by start date (most recent first)
     Page<Budget> findByUserIdOrderByStartDateDesc(UUID userId, Pageable pageable);
 
+    // IMPROVEMENT: Using SpEL (:#{#...}) to evaluate nulls before hitting the DB driver,
+    // preventing the infamous "could not determine data type of parameter" crash.
     @Query("SELECT COUNT(b) > 0 FROM Budget b " +
             "WHERE b.user.id = :userId " +
             "AND b.category.id = :categoryId " +
-            "AND (:excludeBudgetId IS NULL OR b.id <> :excludeBudgetId) " +
-            "AND (:newEndDate IS NULL OR b.startDate <= :newEndDate) " +
+            "AND (:#{#newEndDate == null} = true OR b.startDate <= :newEndDate) " +
             "AND (b.endDate IS NULL OR b.endDate >= :newStartDate)")
     boolean existsOverlappingBudget(
+            @Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("newStartDate") LocalDate newStartDate,
+            @Param("newEndDate") LocalDate newEndDate
+    );
+
+    // IMPROVEMENT: Same SpEL null-safety applied here.
+    @Query("SELECT COUNT(b) > 0 FROM Budget b " +
+            "WHERE b.user.id = :userId " +
+            "AND b.category.id = :categoryId " +
+            "AND b.id <> :excludeBudgetId " +
+            "AND (:#{#newEndDate == null} = true OR b.startDate <= :newEndDate) " +
+            "AND (b.endDate IS NULL OR b.endDate >= :newStartDate)")
+    boolean existsOverlappingBudgetExcluding(
             @Param("userId") UUID userId,
             @Param("categoryId") UUID categoryId,
             @Param("newStartDate") LocalDate newStartDate,

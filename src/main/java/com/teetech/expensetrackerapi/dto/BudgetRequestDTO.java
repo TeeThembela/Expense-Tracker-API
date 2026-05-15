@@ -24,8 +24,8 @@ public record BudgetRequestDTO(
 
         LocalDate endDate
 ) {
-    public BudgetRequestDTO{
-        if (endDate != null && endDate.isBefore(startDate)){
+    public BudgetRequestDTO {
+        if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("End date must be on or after start date");
         }
     }

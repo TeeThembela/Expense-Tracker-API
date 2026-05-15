@@ -22,19 +22,20 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     //Find by name and user id
     Optional<Category> findByUserIdAndNameIgnoreCase(UUID userId, String name);
 
-    //Find categories by type
 
     //Filter by type OR user
-    @Query("SELECT c FROM Category c WHERE c.user.id = :userId OR c.type = 'SYSTEM'")
+    @Query("SELECT c FROM Category c WHERE c.user.id = :userId OR c.type = :systemType")
     Page<Category> findCustomAndNonCustom(
             @Param("userId") UUID userId,
+            @Param("systemType") CategoryType systemType,
             Pageable pageable
     );
 
     //Filter by type AND user id (Custom categories)
-    @Query("SELECT c FROM Category c WHERE c.user.id = :userId AND c.type = 'USER'")
+    @Query("SELECT c FROM Category c WHERE c.user.id = :userId AND c.type = :type")
     Page<Category> findCustom(
             @Param("userId") UUID userId,
+            @Param("type") String type,
             Pageable pageable
     );
 

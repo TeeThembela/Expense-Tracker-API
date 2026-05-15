@@ -8,13 +8,11 @@ import com.teetech.expensetrackerapi.entity.Budget;
 import com.teetech.expensetrackerapi.entity.Category;
 import com.teetech.expensetrackerapi.entity.Expense;
 import com.teetech.expensetrackerapi.entity.User;
-import com.teetech.expensetrackerapi.exception.BudgetNotFoundException;
 import com.teetech.expensetrackerapi.exception.ExpenseNotFoundException;
 import com.teetech.expensetrackerapi.exception.ValidationException;
 import com.teetech.expensetrackerapi.mapper.ExpenseMapper;
 import com.teetech.expensetrackerapi.repository.BudgetRepository;
 import com.teetech.expensetrackerapi.repository.ExpenseRepository;
-import com.teetech.expensetrackerapi.service.BudgetService;
 import com.teetech.expensetrackerapi.service.CategoryService;
 import com.teetech.expensetrackerapi.service.ExpenseService;
 import com.teetech.expensetrackerapi.service.UserService;
@@ -67,14 +65,16 @@ public class ExpenseServiceImpl implements ExpenseService {
         expense.setUser(user);
         expense.setCategory(category);
 
+        // Check budget — expense is already saved regardless of result
+        String warning = checkBudgetExceeded(userId, category, dto.expenseDate(), dto.amount(), null);
+
         // Persist entity
         Expense saved = repository.saveAndFlush(expense);
         log.info("Expense created successfully: expenseId={}, amount={}, category={}, userId={}",
                 saved.getId(), saved.getAmount(), category.getName(), userId);
 
-        // Map to DTO, then check budget — expense is already saved regardless of result
+        // Map to DTO
         ExpenseResponseDTO response = mapper.toExpenseDTO(saved);
-        String warning = checkBudgetExceeded(userId, category, dto.expenseDate(), dto.amount(), null);
 
         if (warning != null) {
             response = withWarning(response, warning);
@@ -284,53 +284,54 @@ public class ExpenseServiceImpl implements ExpenseService {
      * and returning a warning if the budget is exceeded.
      * The expense is always saved, serving as a soft warning rather than a restriction.
      */
-        private String checkBudgetExceeded(UUID userId, Category category,
-                                           LocalDate expenseDate, BigDecimal newAmount,
-                                           UUID excludeExpenseId) {
-            log.debug("Checking budget for userId={}, categoryId={}, expenseDate={}, amount={}",
-                    userId, category.getId(), expenseDate, newAmount);
+    private String checkBudgetExceeded(UUID userId, Category category,
+                                       LocalDate expenseDate, BigDecimal newAmount,
+                                       UUID excludeExpenseId) {
+        log.debug("Checking budget for userId={}, categoryId={}, expenseDate={}, amount={}",
+                userId, category.getId(), expenseDate, newAmount);
 
-            // Find the applicable budget for this category on the expense date
-            Optional<Budget> budgetOpt = budgetRepository.findBudgetForCategoryOnDate(
-                    userId, category.getId(), expenseDate);
+        // 1. Find the applicable budget record for this specific date
+        Optional<Budget> budgetOpt = budgetRepository.findBudgetForCategoryOnDate(
+                userId, category.getId(), expenseDate);
 
-            if (budgetOpt.isEmpty()) {
-                log.debug("No budget found for categoryId={} on date={} — skipping budget check",
-                        category.getId(), expenseDate);
-                return null;
-            }
-
-            Budget budget = budgetOpt.get();
-
-            // Sum all existing expenses within this budget's date range,
-            // Excluding the current expense on update to avoid double-counting
-            LocalDate budgetStart = budget.getStartDate();
-            LocalDate budgetEnd = budget.getEndDate() != null ? budget.getEndDate() : LocalDate.now();
-
-            BigDecimal alreadySpent = repository.sumAmountByUserAndCategoryAndDateRange(
-                    userId, category.getId(), budgetStart, budgetEnd, excludeExpenseId);
-
-            // Add the new amount and check against the budget
-            BigDecimal totalAfterExpense = alreadySpent.add(newAmount);
-
-            log.debug("Budget check: budgetAmount={}, alreadySpent={}, newAmount={}, totalAfter={}",
-                    budget.getAmount(), alreadySpent, newAmount, totalAfterExpense);
-
-            if (totalAfterExpense.compareTo(budget.getAmount()) > 0) {
-                BigDecimal overspend = totalAfterExpense.subtract(budget.getAmount());
-                String warning = String.format(
-                        "Warning: This expense exceeds your '%s' budget by R%.2f. " +
-                                "Budget: R%.2f | Total spent: R%.2f.",
-                        category.getName(),
-                        overspend,
-                        budget.getAmount(),
-                        totalAfterExpense
-                );
-                log.info("Budget exceeded: userId={}, category={}, overspend={}",
-                        userId, category.getName(), overspend);
-                return warning;
-            }
-
+        if (budgetOpt.isEmpty()) {
             return null;
         }
+
+        Budget budget = budgetOpt.get();
+
+        // 2. Sum existing expenses within the Budget's boundaries
+        // We use the budget's actual startDate and endDate.
+        // If endDate is null, we pass null to the repository to sum everything from startDate onwards.
+        LocalDate budgetStart = budget.getStartDate();
+        LocalDate budgetEnd = budget.getEndDate();
+
+        BigDecimal result = repository.sumAmountByUserAndCategoryAndDateRange(
+                userId, category.getId(), budgetStart, budgetEnd, excludeExpenseId);
+
+        // 3. Fix the NullPointerException
+        BigDecimal alreadySpent = (result != null) ? result : BigDecimal.ZERO;
+
+        BigDecimal totalAfterExpense = alreadySpent.add(newAmount);
+
+        log.debug("Budget check for '{}': limit={}, currentTotal={}",
+                category.getName(), budget.getAmount(), totalAfterExpense);
+
+        // 4. Comparison logic
+        if (totalAfterExpense.compareTo(budget.getAmount()) > 0) {
+            BigDecimal overspend = totalAfterExpense.subtract(budget.getAmount());
+
+            // Using a more robust formatting approach
+            return String.format(
+                    "Warning: This expense exceeds your '%s' budget by R%.2f. " +
+                            "Budget limit: R%.2f | Total after this expense: R%.2f.",
+                    category.getName(),
+                    overspend,
+                    budget.getAmount(),
+                    totalAfterExpense
+            );
+        }
+
+        return null;
+    }
 }

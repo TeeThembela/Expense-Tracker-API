@@ -55,7 +55,7 @@ public class BudgetServiceImpl implements BudgetService {
         Category category = categoryService.findAccessibleCategory(dto.categoryId(), userId);
 
         // null = no budget to exclude on create
-        checkBudgetOverlap(userId, category, dto.startDate(), dto.endDate(), null);
+        checkBudgetOverlap(userId, category.getId(), dto.startDate(), dto.endDate(), null);
 
         // Map and wire relationship
         Budget budget = mapper.toBudget(dto);
@@ -100,7 +100,7 @@ public class BudgetServiceImpl implements BudgetService {
         LocalDate effectiveEndDate = dto.endDate() != null ? dto.endDate() : budget.getEndDate();
 
         // Pass budgetId to exclude this budget from conflicting with itself
-        checkBudgetOverlap(userId, category, effectiveStartDate, effectiveEndDate, budgetId);
+        checkBudgetOverlap(userId, category.getId(), effectiveStartDate, effectiveEndDate, budgetId);
 
         // Apply partial updates
         mapper.toBudgetUpdate(dto, budget);
@@ -168,32 +168,36 @@ public class BudgetServiceImpl implements BudgetService {
                     });
         }
 
-        /**
-         * Checks whether the given date range overlaps with any existing budget the user
-         * has for the same category.
-         *
-         * On create: pass excludeBudgetId as null.
-         * On update: pass the existing budget's ID so it doesn't conflict with itself.
-         *
-         * Open-ended budgets (endDate = null) are treated as extending indefinitely —
-         * any new budget for the same category after their startDate will be blocked.
-         *
-         * Throws DuplicateBudgetException if an overlap is detected.
-         */
+    /**
+     * Checks whether the resolved date range overlaps with any existing budget
+     * the user has for the same category.
+     *
+     * @param userId The user's ID
+     * @param categoryId The category ID
+     * @param newStartDate The resolved start date (must not be null)
+     * @param newEndDate The resolved end date (can be null for open-ended budgets)
+     * @param excludeBudgetId The ID of the budget to exclude (null for creation)
+     */
+    private void checkBudgetOverlap(UUID userId, UUID categoryId,
+                                    LocalDate newStartDate, LocalDate newEndDate,
+                                    UUID excludeBudgetId) {
 
-        private void checkBudgetOverlap(UUID userId, Category category,
-                                        LocalDate startDate, LocalDate endDate,
-                                        UUID excludeBudgetId) {
-            log.debug("Checking budget overlap: userId={}, categoryId={}, startDate={}, endDate={}, excludeId={}",
-                    userId, category.getId(), startDate, endDate, excludeBudgetId);
-
-            boolean overlaps = repository.existsOverlappingBudget(
-                    userId, category.getId(), startDate, endDate, excludeBudgetId);
-
-            if (overlaps) {
-                log.warn("Budget overlap detected: userId={}, category={}, startDate={}, endDate={}",
-                        userId, category.getName(), startDate, endDate);
-                throw new DuplicateBudgetException(category.getName());
-            }
+        // Safety check: Never allow a null start date into the database check
+        if (newStartDate == null) {
+            throw new IllegalArgumentException("Start date cannot be null when checking overlaps");
         }
+
+        log.debug("Checking budget overlap: userId={}, categoryId={}, startDate={}, endDate={}, excludeId={}",
+                userId, categoryId, newStartDate, newEndDate, excludeBudgetId);
+
+        boolean overlaps = excludeBudgetId == null
+                ? repository.existsOverlappingBudget(userId, categoryId, newStartDate, newEndDate)
+                : repository.existsOverlappingBudgetExcluding(userId, categoryId, newStartDate, newEndDate, excludeBudgetId);
+
+        if (overlaps) {
+            log.warn("Budget overlap detected: userId={}, categoryId={}, startDate={}, endDate={}",
+                    userId, categoryId, newStartDate, newEndDate);
+            throw new DuplicateBudgetException("A budget already exists for this category during the selected dates.");
+        }
+    }
 }

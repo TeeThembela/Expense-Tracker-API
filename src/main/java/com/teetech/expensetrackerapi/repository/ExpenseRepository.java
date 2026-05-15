@@ -51,16 +51,16 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
     //Get expenses ordered by amount (highest first)
     Page<Expense> findByUserIdOrderByAmountDesc(UUID userId, Pageable pageable);
 
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e " +
-            "WHERE e.user.id = :userId " +
-            "AND e.category.id = :categoryId " +
-            "AND e.expenseDate BETWEEN :startDate AND :endDate " +
-            "AND (:excludeExpenseId IS NULL OR e.id <> :excludeExpenseId)")
+    @Query("SELECT SUM(e.amount) FROM Expense e " +
+                  "WHERE e.user.id = :userId " +
+                  "AND e.category.id = :categoryId " +
+                  "AND e.expenseDate >= :startDate " +
+                  "AND (:#{#endDate == null} = true OR e.expenseDate <= :endDate) " +
+                  "AND (:#{#excludeId == null} = true OR e.id <> :excludeId)")
     BigDecimal sumAmountByUserAndCategoryAndDateRange(
             @Param("userId") UUID userId,
             @Param("categoryId") UUID categoryId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
-            @Param("excludeExpenseId") UUID excludeExpenseId
-    );
+            @Param("excludeId") UUID excludeId);
 }

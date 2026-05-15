@@ -46,6 +46,7 @@ public class Expense {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Column(length = 500)
     private String description;
 
     @CreationTimestamp

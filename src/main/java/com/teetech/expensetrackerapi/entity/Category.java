@@ -63,11 +63,11 @@ public class Category {
     private LocalDateTime updatedAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Expense> expenses = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category",
-            cascade =  {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade =  {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Budget> budgets = new ArrayList<>();
 
     public boolean isSystemCategory() {

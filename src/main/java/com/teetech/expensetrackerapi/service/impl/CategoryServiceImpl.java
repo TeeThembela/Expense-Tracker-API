@@ -128,7 +128,7 @@ public class CategoryServiceImpl implements CategoryService {
         userService.findUserOrThrow(userId);
 
         // Fetch both SYSTEM TYPE and this user's USER categories
-        return repository.findCustomAndNonCustom(userId, pageable)
+        return repository.findCustomAndNonCustom(userId, CategoryType.SYSTEM, pageable)
                 .map(mapper::toCategoryDTO);
     }
 
