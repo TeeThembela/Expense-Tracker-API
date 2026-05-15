@@ -16,27 +16,6 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
 
     Optional<Budget> findByIdAndUserId(UUID budgetId, UUID userId);
 
-    Page<Budget> findAllByCategoryIdAndUserId(UUID categoryId, UUID userId, Pageable pageable);
-
-    @Query("SELECT b FROM Budget b WHERE b.user.id = :userId " +
-            "AND :currentDate >= b.startDate " +
-            "AND (b.endDate IS NULL OR :currentDate <= b.endDate)")
-    Page<Budget> findActiveBudgets(
-            @Param("userId") UUID userId,
-            @Param("currentDate") LocalDate currentDate,
-            Pageable pageable
-    );
-
-    @Query("SELECT b FROM Budget b WHERE b.user.id = :userId " +
-            "AND b.startDate <= :endDate " +
-            "AND (b.endDate IS NULL OR b.endDate >= :startDate)")
-    Page<Budget> findByUserIdAndDateRange(
-            @Param("userId") UUID userId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            Pageable pageable
-    );
-
     @Query("SELECT b FROM Budget b " +
             "WHERE b.user.id = :userId " +
             "AND b.category.id = :categoryId " +
@@ -48,7 +27,6 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             @Param("expenseDate") LocalDate expenseDate
     );
 
-    Page<Budget> findByUserIdOrderByStartDateDesc(UUID userId, Pageable pageable);
 
     // IMPROVEMENT: Using SpEL (:#{#...}) to evaluate nulls before hitting the DB driver,
     // preventing the infamous "could not determine data type of parameter" crash.

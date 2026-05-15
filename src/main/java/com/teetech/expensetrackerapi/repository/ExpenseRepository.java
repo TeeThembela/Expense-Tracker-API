@@ -45,12 +45,6 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
             Pageable pageable
     );
 
-    //Get expenses ordered by date (most recent first)
-    Page<Expense> findByUserIdOrderByExpenseDateDesc(UUID userId, Pageable pageable);
-
-    //Get expenses ordered by amount (highest first)
-    Page<Expense> findByUserIdOrderByAmountDesc(UUID userId, Pageable pageable);
-
     @Query("SELECT SUM(e.amount) FROM Expense e " +
                   "WHERE e.user.id = :userId " +
                   "AND e.category.id = :categoryId " +
