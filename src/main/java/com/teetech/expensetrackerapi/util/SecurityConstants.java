@@ -7,6 +7,9 @@ public final class SecurityConstants {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String[] PUBLIC_URLS = {
             "/api/v1/auth/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
     };
 
 }

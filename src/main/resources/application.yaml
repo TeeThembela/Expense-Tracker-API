@@ -25,3 +25,15 @@ application:
       access-token-expiration: 900000 # 15 minutes
       refresh-token-expiration: 604800000 # 7 days
       issuer: Expense-Tracker-API
+
+springdoc:
+  api-docs:
+    enabled: false
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    operations-sorter: alpha
+    doc-expansion: list
+    tags-sorter: alpha
