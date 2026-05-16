@@ -1,0 +1,21 @@
+# Maven target directory
+target/
+# Local Maven repository (if present)
+.m2/
+# IDE files
+.idea/
+.vscode/
+*.iml
+# Logs
+*.log
+# OS files
+.DS_Store
+Thumbs.db
+# Git
+.git
+.gitignore
+# Docker
+Dockerfile
+docker-compose.yml
+# Test outputs
+surefire-reports/

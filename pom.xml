@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>25</java.version>
+        <java.version>22</java.version>
         <mapstruct.version>1.6.3</mapstruct.version>
     </properties>
     <dependencies>
@@ -117,6 +117,7 @@
     </dependencies>
 
     <build>
+        <finalName>expense-tracker-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

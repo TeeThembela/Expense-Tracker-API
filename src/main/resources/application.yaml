@@ -2,13 +2,13 @@ spring:
   application:
     name: Expense-Tracker-API
   datasource:
-    url: jdbc:postgresql://localhost:5433/expense-tracker-api
-    username: postgres
-    password: 7h3mb3la
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:expense-tracker-api}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:7h3mb3la}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -21,17 +21,17 @@ spring:
 application:
   security:
     jwt:
-      secret-key: YTNmOGMyZDFlNGI3MDkxZjZhMmM1ZThkM2I0ZjdhMWMyZTVkOGIzZjZhOWMyZTVkOGIxZjRhN2MwZTNkNmI5
-      access-token-expiration: 900000 # 15 minutes
-      refresh-token-expiration: 604800000 # 7 days
-      issuer: Expense-Tracker-API
+      secret-key: ${JWT_SECRET_KEY:YTNmOGMyZDFlNGI3MDkxZjZhMmM1ZThkM2I0ZjdhMWMyZTVkOGIzZjZhOWMyZTVkOGIxZjRhN2MwZTNkNmI5}
+      access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:900000}
+      refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:604800000}
+      issuer: ${JWT_ISSUER:Expense-Tracker-API}
 
 springdoc:
   api-docs:
-    enabled: false
+    enabled: ${SPRINGDOC_API_DOCS_ENABLED:true}
     path: /v3/api-docs
   swagger-ui:
-    enabled: true
+    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:true}
     path: /swagger-ui.html
     disable-swagger-default-url: true
     operations-sorter: alpha
