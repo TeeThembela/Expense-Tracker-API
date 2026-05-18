@@ -3,7 +3,7 @@
 A secure, production-structured REST API for tracking personal expenses, managing
 spending budgets, and organising categories — built with Spring Boot 4 and Java 22.
 
-> **Portfolio project** by [Thembela Tole](https://github.com/placeholder)
+> **Portfolio project** by [Thembela Tole](https://github.com/expense-tracker-api))
 
 ---
 
